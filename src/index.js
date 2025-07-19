@@ -134,22 +134,33 @@ async function sendCommand(args) {
 
     progress.complete();
 
-    // Generate and display summary
-    const logData = await loadLogFile(args.output);
-    const summary = generateSummaryReport(logData);
-
-    console.log(`\n${summary}`);
-
     // Calculate final statistics
     const successful = results.filter(r => r.success).length;
     const failed = results.filter(r => !r.success).length;
     const successRate = Math.round((successful / results.length) * 100);
 
+    // Display final summary
+    console.log('\n' + '='.repeat(50));
+    console.log('📊 CAMPAIGN SUMMARY');
+    console.log('='.repeat(50));
+    console.log(`✅ Successful: ${successful}`);
+    console.log(`❌ Failed: ${failed}`);
+    console.log(`📈 Success Rate: ${successRate}%`);
+    console.log(`📧 Total Processed: ${results.length}`);
+    console.log('='.repeat(50));
+
     if (failed > 0) {
-      printInfo(`⚠️  ${failed} emails failed to send. Check ${args.output} for details.`);
+      console.log(`\n⚠️  ${failed} emails failed to send. Check ${args.output} for details.`);
     }
 
-    const successMessage = `Email campaign completed! ${successful}/${results.length} emails sent (${successRate}% success rate)`;
+    // Generate and display detailed summary if verbose
+    if (config.verbose) {
+      const logData = await loadLogFile(args.output);
+      const summary = generateSummaryReport(logData);
+      console.log(`\n${summary}`);
+    }
+
+    const successMessage = `\n🎉 Email campaign completed! ${successful}/${results.length} emails sent (${successRate}% success rate)`;
     printSuccess(successMessage);
   } catch (error) {
     console.error('\n❌ Fatal Error:', error.message);
