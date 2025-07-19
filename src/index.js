@@ -101,36 +101,36 @@ async function sendCommand(args) {
     printInfo(`Rate limit: ${config.rateLimit} emails per second`);
 
     const progress = createProgressIndicator(subscribers.length);
+    let lastStatusUpdate = 0;
+    const statusUpdateInterval = Math.max(1, Math.floor(subscribers.length / 10)); // Update every 10% or at least every email
 
-    // Process template for each subscriber and prepare email data
-    subscribers.map(subscriber => {
-      const token = generateTokenForSubscriber(subscriber);
-      const processedTemplate = processTemplateForSubscriber(template, subscriber, token);
-
-      return {
-        to: subscriber.email,
-        subject: processedTemplate.subject,
-        text: processedTemplate.text,
-        html: processedTemplate.html,
-      };
-    });
-
-    // Send bulk emails
+    // Send bulk emails with progress callback
     const results = await sendBulkEmails(mailgunClient, subscribers, template, {
       rateLimit: config.rateLimit,
-    });
+      onProgress: async (progressData) => {
+        const { current, total, result, percentage } = progressData;
+        
+        // Log the result
+        await logEmailResult(logger, result);
+        
+        // Update progress bar
+        progress.update();
 
-    // Log results and update progress
-    for (let i = 0; i < results.length; i++) {
-      const result = results[i];
-      await logEmailResult(logger, result);
-      progress.update();
-
-      if (config.verbose) {
-        const status = result.success ? '✅' : '❌';
-        printVerbose(`${status} ${result.email}: ${result.success ? 'sent' : result.error}`, true);
+        // Show detailed status in verbose mode
+        if (config.verbose) {
+          const status = result.success ? '✅' : '❌';
+          printVerbose(`${status} ${result.email}: ${result.success ? 'sent' : result.error}`, true);
+        } else {
+          // Show periodic status updates in non-verbose mode
+          if (current - lastStatusUpdate >= statusUpdateInterval || current === total) {
+            const successful = current; // Approximate for now
+            const timeElapsed = Math.round((current / config.rateLimit) * 10) / 10; // Rough estimate
+            console.log(`📧 Progress: ${current}/${total} emails sent (${percentage}%) - ~${timeElapsed}s elapsed`);
+            lastStatusUpdate = current;
+          }
+        }
       }
-    }
+    });
 
     progress.complete();
 

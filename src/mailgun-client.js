@@ -144,9 +144,10 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
  * @returns {Promise<Array>} - Array of send results
  */
 export const sendBulkEmails = async (client, subscribers, emailTemplate, options = {}) => {
-  const { rateLimit = 10 } = options; // Default 10 emails per second
+  const { rateLimit = 10, onProgress } = options; // Default 10 emails per second
   const delayBetweenEmails = 1000 / rateLimit;
   const results = [];
+  const total = subscribers.length;
 
   for (let i = 0; i < subscribers.length; i++) {
     const subscriber = subscribers[i];
@@ -166,10 +167,22 @@ export const sendBulkEmails = async (client, subscribers, emailTemplate, options
 
     const result = await sendEmail(client, processedEmail);
 
-    results.push({
+    const emailResult = {
       email: subscriber.email,
       ...result,
-    });
+    };
+
+    results.push(emailResult);
+
+    // Call progress callback if provided
+    if (onProgress) {
+      onProgress({
+        current: i + 1,
+        total,
+        result: emailResult,
+        percentage: Math.round(((i + 1) / total) * 100),
+      });
+    }
 
     // Rate limiting: delay between emails (except for the last one)
     if (i < subscribers.length - 1) {
