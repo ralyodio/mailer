@@ -38,16 +38,17 @@ export const validateCSVStructure = data => {
     throw new Error('CSV file is empty');
   }
 
-  // Check if email column exists
+  // Check if email column exists (support both formats)
   const firstRow = data[0];
-  if (!Object.prototype.hasOwnProperty.call(firstRow, 'email')) {
-    throw new Error('CSV must contain an "email" column');
+  const emailField = firstRow.Email || firstRow.email;
+  if (!emailField && !Object.prototype.hasOwnProperty.call(firstRow, 'Email') && !Object.prototype.hasOwnProperty.call(firstRow, 'email')) {
+    throw new Error('CSV must contain an "Email" or "email" column');
   }
 
   // Validate all email addresses
   for (let i = 0; i < data.length; i++) {
     const row = data[i];
-    const email = row.email?.trim();
+    const email = (row.Email || row.email)?.trim();
 
     if (!validateEmail(email)) {
       throw new Error(`Invalid email address found: ${email || 'empty'}`);
@@ -78,6 +79,19 @@ export const parseCSV = async filePath => {
           for (const [key, value] of Object.entries(chunk)) {
             normalizedChunk[key] = typeof value === 'string' ? value.trim() : value;
           }
+          
+          // Normalize field names for template compatibility
+          // Map new format (FirstName, LastName, Email) to template placeholders
+          if (normalizedChunk.FirstName !== undefined) {
+            normalizedChunk.firstName = normalizedChunk.FirstName;
+          }
+          if (normalizedChunk.LastName !== undefined) {
+            normalizedChunk.lastName = normalizedChunk.LastName;
+          }
+          if (normalizedChunk.Email !== undefined) {
+            normalizedChunk.email = normalizedChunk.Email;
+          }
+          
           yield normalizedChunk;
         }
       },
@@ -116,9 +130,11 @@ export const parseCSV = async filePath => {
  */
 export const getCSVStats = data => {
   const totalSubscribers = data.length;
-  const withFirstName = data.filter(row => row.first_name?.trim()).length;
-  const withLastName = data.filter(row => row.last_name?.trim()).length;
-  const withFullName = data.filter(row => row.first_name?.trim() && row.last_name?.trim()).length;
+  const withFirstName = data.filter(row => (row.FirstName || row.first_name)?.trim()).length;
+  const withLastName = data.filter(row => (row.LastName || row.last_name)?.trim()).length;
+  const withFullName = data.filter(row =>
+    (row.FirstName || row.first_name)?.trim() && (row.LastName || row.last_name)?.trim()
+  ).length;
 
   return {
     totalSubscribers,

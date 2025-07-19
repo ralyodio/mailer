@@ -1,0 +1,6 @@
+{
+  "subject": "Welcome! Please confirm your subscription",
+  "text": "Hello {firstName} {lastName},\n\nThank you for subscribing to our newsletter! To complete your subscription, please click the confirmation link below:\n\n{confirmationUrl}\n\nIf you didn't sign up for this newsletter, you can safely ignore this email.\n\nBest regards,\nThe Team",
+  "html": "<html><body><h2>Welcome! Please confirm your subscription</h2><p>Hello <strong>{firstName} {lastName}</strong>,</p><p>Thank you for subscribing to our newsletter! To complete your subscription, please click the confirmation link below:</p><p><a href=\"{confirmationUrl}\" style=\"background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;\">Confirm Subscription</a></p><p>If you didn't sign up for this newsletter, you can safely ignore this email.</p><p>Best regards,<br>The Team</p></body></html>",
+  "confirmationUrl": "{confirmationUrl}"
+}
