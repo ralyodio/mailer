@@ -5,7 +5,7 @@
   "type": "module",
   "main": "src/index.js",
   "bin": {
-    "mailgun-confirm": "src/index.js"
+    "mailer": "src/index.js"
   },
   "scripts": {
     "start": "node src/index.js",
@@ -34,6 +34,7 @@
   },
   "dependencies": {
     "mailgun.js": "^10.2.3",
+    "form-data": "^4.0.0",
     "csv-parser": "^3.0.0",
     "uuid": "^10.0.0",
     "dotenv": "^16.4.5"

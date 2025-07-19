@@ -21,25 +21,10 @@ import {
 } from './cli.js';
 
 /**
- * Main CLI application function
+ * Send opt-in confirmation emails command
  */
-async function main() {
+async function sendCommand(args) {
   try {
-    // Parse command line arguments
-    const rawArgs = parseArguments(process.argv);
-    const args = normalizeArguments(rawArgs);
-
-    // Handle help and version flags
-    if (args.help) {
-      console.log(showHelp());
-      process.exit(0);
-    }
-
-    if (args.version) {
-      console.log(showVersion());
-      process.exit(0);
-    }
-
     // Validate arguments
     const argValidation = validateArguments(args);
     if (!argValidation.valid) {
@@ -163,7 +148,126 @@ async function main() {
       console.error(error.stack);
     }
 
-    console.error('\nFor help, run: mailgun-confirm --help');
+    console.error('\nFor help, run: mailer send --help');
+    process.exit(1);
+  }
+}
+
+/**
+ * Show main help information
+ */
+function showMainHelp() {
+  return `
+mailer v1.0.0
+CLI tool for sending opt-in confirmation emails via Mailgun
+
+Usage:
+  mailer <command> [options]
+
+Commands:
+  send        Send opt-in confirmation emails to subscribers
+  help        Show help information
+  version     Show version information
+
+Options:
+  --help, -h  Show help for command
+  --version   Show version information
+
+Examples:
+  mailer send --csv=subscribers.csv --template=welcome.json --output=results.csv
+  mailer help send
+  mailer version
+
+For more information on a specific command, run:
+  mailer <command> --help
+`;
+}
+
+/**
+ * Show command-specific help
+ */
+function showCommandHelp(command) {
+  switch (command) {
+    case 'send':
+      return showHelp().replace('mailgun-confirm', 'mailer send');
+    default:
+      return showMainHelp();
+  }
+}
+
+/**
+ * Main CLI application function
+ */
+async function main() {
+  try {
+    const argv = process.argv.slice(2);
+    
+    // Handle no arguments
+    if (argv.length === 0) {
+      console.log(showMainHelp());
+      process.exit(0);
+    }
+
+    const command = argv[0];
+
+    // Handle global flags
+    if (command === '--help' || command === '-h') {
+      console.log(showMainHelp());
+      process.exit(0);
+    }
+
+    if (command === '--version') {
+      console.log(showVersion());
+      process.exit(0);
+    }
+
+    // Handle commands
+    switch (command) {
+      case 'send': {
+        // Parse arguments for send command (skip the 'send' command)
+        const rawArgs = parseArguments(['node', 'mailer', ...argv.slice(1)]);
+        const args = normalizeArguments(rawArgs);
+
+        // Handle command-specific help
+        if (args.help) {
+          console.log(showCommandHelp('send'));
+          process.exit(0);
+        }
+
+        await sendCommand(args);
+        break;
+      }
+
+      case 'help': {
+        const helpCommand = argv[1];
+        if (helpCommand) {
+          console.log(showCommandHelp(helpCommand));
+        } else {
+          console.log(showMainHelp());
+        }
+        process.exit(0);
+      }
+
+      case 'version': {
+        console.log(showVersion());
+        process.exit(0);
+      }
+
+      default: {
+        console.error(`\n❌ Unknown command: ${command}`);
+        console.log(showMainHelp());
+        process.exit(1);
+      }
+    }
+  } catch (error) {
+    console.error('\n❌ Fatal Error:', error.message);
+
+    if (process.env.NODE_ENV === 'development') {
+      console.error('\nStack trace:');
+      console.error(error.stack);
+    }
+
+    console.error('\nFor help, run: mailer --help');
     process.exit(1);
   }
 }
@@ -204,4 +308,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   main();
 }
 
-export { main };
+export { main, sendCommand };

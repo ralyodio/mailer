@@ -122,7 +122,7 @@ ${packageJson.name} v${packageJson.version}
 ${packageJson.description}
 
 Usage:
-  mailgun-confirm --csv=<file> --template=<file> --output=<file> [options]
+  mailer send --csv=<file> --template=<file> --output=<file> [options]
 
 Required Arguments:
   --csv, -c <file>        Path to CSV file containing subscriber data
@@ -146,16 +146,16 @@ Environment Variables:
 
 Examples:
   # Basic usage
-  mailgun-confirm --csv=subscribers.csv --template=welcome.json --output=results.csv
+  mailer send --csv=subscribers.csv --template=welcome.json --output=results.csv
 
   # With custom rate limiting
-  mailgun-confirm --csv=list.csv --template=confirm.json --output=log.csv --rate-limit=5
+  mailer send --csv=list.csv --template=confirm.json --output=log.csv --rate-limit=5
 
   # Dry run to preview emails
-  mailgun-confirm --csv=test.csv --template=template.json --output=preview.csv --dry-run
+  mailer send --csv=test.csv --template=template.json --output=preview.csv --dry-run
 
   # Verbose output
-  mailgun-confirm --csv=data.csv --template=email.json --output=results.csv --verbose
+  mailer send --csv=data.csv --template=email.json --output=results.csv --verbose
 
 For more information, visit: ${packageJson.homepage || 'https://github.com/username/mailgun-optin-cli'}
 `;

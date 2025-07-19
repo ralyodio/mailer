@@ -91,13 +91,13 @@ Create a JSON template file with your email content:
 
 ```bash
 # Basic usage
-mailgun-confirm --csv=subscribers.csv --template=template.json --output=results.csv
+mailer send --csv=subscribers.csv --template=template.json --output=results.csv
 
 # With custom rate limiting
-mailgun-confirm --csv=list.csv --template=confirm.json --output=log.csv --rate-limit=5
+mailer send --csv=list.csv --template=confirm.json --output=log.csv --rate-limit=5
 
 # Dry run to preview emails
-mailgun-confirm --csv=test.csv --template=template.json --output=preview.csv --dry-run
+mailer send --csv=test.csv --template=template.json --output=preview.csv --dry-run
 ```
 
 ## Usage
@@ -106,7 +106,15 @@ mailgun-confirm --csv=test.csv --template=template.json --output=preview.csv --d
 
 ```
 Usage:
-  mailgun-confirm --csv=<file> --template=<file> --output=<file> [options]
+  mailer <command> [options]
+
+Commands:
+  send        Send opt-in confirmation emails to subscribers
+  help        Show help information
+  version     Show version information
+
+Send Command:
+  mailer send --csv=<file> --template=<file> --output=<file> [options]
 
 Required Arguments:
   --csv, -c <file>        Path to CSV file containing subscriber data
@@ -117,6 +125,9 @@ Options:
   --rate-limit <number>   Emails per second (default: 10)
   --dry-run              Preview emails without sending
   --verbose, -v          Enable verbose logging
+  --help, -h             Show help message
+
+Global Options:
   --help, -h             Show help message
   --version              Show version information
 ```
