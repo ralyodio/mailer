@@ -321,8 +321,9 @@ export const createProgressIndicator = total => {
     update: (increment = 1) => {
       current += increment;
       const percentage = Math.round((current / total) * 100);
-      const progressBar =
-        '█'.repeat(Math.floor(percentage / 2)) + '░'.repeat(50 - Math.floor(percentage / 2));
+      const filled = Math.floor(percentage / 2);
+      const empty = Math.max(0, 50 - filled);
+      const progressBar = '█'.repeat(filled) + '░'.repeat(empty);
 
       process.stdout.write(`\r📧 Progress: [${progressBar}] ${percentage}% (${current}/${total})`);
 

@@ -8,6 +8,7 @@ import {
   showVersion,
   loadConfiguration,
   validateConfiguration,
+  createProgressIndicator,
 } from '../src/cli.js';
 
 describe('CLI Module', () => {
@@ -483,6 +484,91 @@ RATE_LIMIT=10`;
       // Last one should win
       expect(args.c).to.equal('short.csv');
       expect(args.csv).to.equal('long.csv');
+    });
+  });
+
+  describe('createProgressIndicator', () => {
+    let originalStdoutWrite;
+    let capturedOutput;
+
+    beforeEach(() => {
+      // Capture stdout.write calls
+      capturedOutput = [];
+      originalStdoutWrite = process.stdout.write;
+      process.stdout.write = function (string) {
+        capturedOutput.push(string);
+        return true;
+      };
+    });
+
+    afterEach(() => {
+      // Restore original stdout.write
+      process.stdout.write = originalStdoutWrite;
+    });
+
+    it('should create progress indicator for normal list size', () => {
+      const progress = createProgressIndicator(100);
+      
+      progress.update(25);
+      
+      expect(capturedOutput.length).to.be.greaterThan(0);
+      expect(capturedOutput[0]).to.include('25%');
+      expect(capturedOutput[0]).to.include('(25/100)');
+    });
+
+    it('should handle small list sizes without negative repeat count', () => {
+      const progress = createProgressIndicator(2);
+      
+      // This should not throw an error
+      expect(() => progress.update(1)).to.not.throw();
+      expect(() => progress.update(1)).to.not.throw();
+      
+      expect(capturedOutput.length).to.be.greaterThan(0);
+      expect(capturedOutput[0]).to.include('50%');
+      expect(capturedOutput[1]).to.include('100%');
+    });
+
+    it('should handle single item list', () => {
+      const progress = createProgressIndicator(1);
+      
+      expect(() => progress.update(1)).to.not.throw();
+      
+      expect(capturedOutput.length).to.be.greaterThan(0);
+      expect(capturedOutput[0]).to.include('100%');
+      expect(capturedOutput[0]).to.include('(1/1)');
+    });
+
+    it('should handle zero progress correctly', () => {
+      const progress = createProgressIndicator(10);
+      
+      progress.update(0);
+      
+      expect(capturedOutput.length).to.be.greaterThan(0);
+      expect(capturedOutput[0]).to.include('0%');
+      expect(capturedOutput[0]).to.include('(0/10)');
+    });
+
+    it('should complete progress bar correctly', () => {
+      const progress = createProgressIndicator(5);
+      
+      progress.complete();
+      
+      expect(capturedOutput.length).to.be.greaterThan(0);
+      expect(capturedOutput[0]).to.include('100%');
+      expect(capturedOutput[0]).to.include('(5/5)');
+      expect(capturedOutput[0]).to.include('█'.repeat(50));
+    });
+
+    it('should handle progress over 100% gracefully', () => {
+      const progress = createProgressIndicator(2);
+      
+      // Update beyond total
+      progress.update(3);
+      
+      expect(capturedOutput.length).to.be.greaterThan(0);
+      expect(capturedOutput[0]).to.include('150%');
+      expect(capturedOutput[0]).to.include('(3/2)');
+      // Should not throw error even with percentage > 100%
     });
   });
 });
