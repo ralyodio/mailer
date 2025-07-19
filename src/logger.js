@@ -52,7 +52,14 @@ export const createLogger = async logPath => {
   return {
     logPath,
     log: async data => {
-      const csvLine = `${escapeCSVField(data.timestamp)},${escapeCSVField(data.email)},${escapeCSVField(data.status)},${escapeCSVField(data.message_id)},${escapeCSVField(data.error)}\n`;
+      const csvFields = [
+        escapeCSVField(data.timestamp),
+        escapeCSVField(data.email),
+        escapeCSVField(data.status),
+        escapeCSVField(data.message_id),
+        escapeCSVField(data.error),
+      ].join(',');
+      const csvLine = `${csvFields}\n`;
       await fs.appendFile(logPath, csvLine);
     },
   };
@@ -83,7 +90,7 @@ export const logEmailResult = async (logger, result) => {
 export const loadLogFile = async logPath => {
   try {
     await fs.access(logPath);
-  } catch (error) {
+  } catch {
     throw new Error(`Log file not found: ${logPath}`);
   }
 
@@ -295,7 +302,7 @@ export const validateLogFile = async logPath => {
 
     // Check if all entries have required fields
     const invalidEntries = logData.filter(
-      entry => !requiredFields.every(field => entry.hasOwnProperty(field)),
+      entry => !requiredFields.every(field => Object.prototype.hasOwnProperty.call(entry, field)),
     );
 
     if (invalidEntries.length > 0) {

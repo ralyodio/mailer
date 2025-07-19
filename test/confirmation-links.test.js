@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import { URL } from 'url';
 import {
   generateConfirmationToken,
   createConfirmationLink,

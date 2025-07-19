@@ -23,7 +23,7 @@ describe('Logger Module', () => {
     // Clean up test fixtures
     try {
       await fs.rm(testDataDir, { recursive: true, force: true });
-    } catch (error) {
+    } catch {
       // Ignore cleanup errors
     }
   });
@@ -32,7 +32,7 @@ describe('Logger Module', () => {
     // Clean up any existing test log file
     try {
       await fs.unlink(testLogFile);
-    } catch (error) {
+    } catch {
       // File doesn't exist, ignore
     }
   });
@@ -76,7 +76,7 @@ describe('Logger Module', () => {
     it('should append to existing file without duplicating headers', async () => {
       // Create logger first time
       await createLogger(testLogFile);
-      const firstContent = await fs.readFile(testLogFile, 'utf8');
+      await fs.readFile(testLogFile, 'utf8');
 
       // Create logger second time
       await createLogger(testLogFile);

@@ -15,7 +15,7 @@ describe('CSV Parser Module', () => {
     // Clean up test fixtures
     try {
       await fs.rm(testDataDir, { recursive: true, force: true });
-    } catch (error) {
+    } catch {
       // Ignore cleanup errors
     }
   });

@@ -81,7 +81,7 @@ export const parseCSV = async filePath => {
           yield normalizedChunk;
         }
       },
-      async function (source) {
+      async (source) => {
         for await (const chunk of source) {
           results.push(chunk);
         }
