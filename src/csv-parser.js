@@ -29,8 +29,9 @@ export const validateEmail = email => {
 };
 
 /**
- * Validates the structure of parsed CSV data
+ * Validates the structure of parsed CSV data and filters out invalid emails
  * @param {Array<Object>} data - Array of CSV row objects
+ * @returns {Object} - Object containing valid data and skipped emails info
  * @throws {Error} - If validation fails
  */
 export const validateCSVStructure = data => {
@@ -45,21 +46,38 @@ export const validateCSVStructure = data => {
     throw new Error('CSV must contain an "Email" or "email" column');
   }
 
-  // Validate all email addresses
+  // Filter out invalid email addresses and collect skipped emails
+  const validData = [];
+  const skippedEmails = [];
+
   for (let i = 0; i < data.length; i++) {
     const row = data[i];
     const email = (row.Email || row.email)?.trim();
 
     if (!validateEmail(email)) {
-      throw new Error(`Invalid email address found: ${email || 'empty'}`);
+      skippedEmails.push({
+        rowNumber: i + 1,
+        email: email || 'empty',
+        reason: 'Invalid email format'
+      });
+    } else {
+      validData.push(row);
     }
   }
+
+  return {
+    validData,
+    skippedEmails,
+    totalRows: data.length,
+    validRows: validData.length,
+    skippedRows: skippedEmails.length
+  };
 };
 
 /**
  * Parses a CSV file and returns validated subscriber data
  * @param {string} filePath - Path to the CSV file
- * @returns {Promise<Array<Object>>} - Array of subscriber objects
+ * @returns {Promise<Object>} - Object containing valid subscribers and skipped emails info
  * @throws {Error} - If file cannot be read or data is invalid
  */
 export const parseCSV = async filePath => {
@@ -102,17 +120,16 @@ export const parseCSV = async filePath => {
       },
     );
 
-    // Validate the parsed data structure
-    validateCSVStructure(results);
+    // Validate the parsed data structure and filter invalid emails
+    const validationResult = validateCSVStructure(results);
 
-    return results;
+    return validationResult;
   } catch (error) {
     if (error.code === 'ENOENT') {
       throw new Error(`CSV file not found: ${filePath}`);
     }
 
     if (
-      error.message.includes('Invalid email') ||
       error.message.includes('CSV must contain') ||
       error.message.includes('CSV file is empty')
     ) {

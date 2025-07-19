@@ -44,8 +44,19 @@ async function sendCommand(args) {
 
     // Load and parse CSV file
     printInfo(`Loading CSV file: ${args.csv}`);
-    const subscribers = await parseCSV(args.csv);
-    printSuccess(`Loaded ${subscribers.length} subscribers from CSV`);
+    const csvResult = await parseCSV(args.csv);
+    const { validData: subscribers, skippedEmails } = csvResult;
+    
+    printSuccess(`Loaded ${subscribers.length} valid subscribers from CSV`);
+    
+    // Report skipped emails if any
+    if (skippedEmails.length > 0) {
+      console.warn(`⚠️  Skipped ${skippedEmails.length} invalid email(s):`);
+      skippedEmails.forEach(skipped => {
+        console.warn(`   • Row ${skipped.rowNumber}: ${skipped.email} (${skipped.reason})`);
+      });
+      console.log(''); // Add blank line for readability
+    }
 
     // Load email template
     printInfo(`Loading email template: ${args.template}`);
