@@ -174,7 +174,7 @@ Options:
   --version   Show version information
 
 Examples:
-  mailer send --csv=subscribers.csv --template=welcome.json --output=results.csv
+  mailer send --csv=subscribers.csv --template=templates/welcome.json --output=results.csv
   mailer help send
   mailer version
 

@@ -146,16 +146,16 @@ Environment Variables:
 
 Examples:
   # Basic usage
-  mailer send --csv=subscribers.csv --template=welcome.json --output=results.csv
+  mailer send --csv=subscribers.csv --template=templates/welcome.json --output=results.csv
 
   # With custom rate limiting
-  mailer send --csv=list.csv --template=confirm.json --output=log.csv --rate-limit=5
+  mailer send --csv=list.csv --template=templates/confirm.json --output=log.csv --rate-limit=5
 
   # Dry run to preview emails
-  mailer send --csv=test.csv --template=template.json --output=preview.csv --dry-run
+  mailer send --csv=test.csv --template=templates/template.json --output=preview.csv --dry-run
 
   # Verbose output
-  mailer send --csv=data.csv --template=email.json --output=results.csv --verbose
+  mailer send --csv=data.csv --template=templates/email.json --output=results.csv --verbose
 
 For more information, visit: ${packageJson.homepage || 'https://github.com/username/mailgun-optin-cli'}
 `;
