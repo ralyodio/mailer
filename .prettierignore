@@ -1,0 +1,56 @@
+# Dependencies
+node_modules/
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Build output
+build/
+dist/
+coverage/
+
+# Generated files
+*.min.js
+*.min.css
+
+# Logs
+*.log
+logs/
+
+# Environment files
+.env
+.env.*
+
+# Cache directories
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Test fixtures and temporary files
+test/fixtures/
+test/tmp/
+tmp/
+temp/
+
+# Documentation that should preserve formatting
+CHANGELOG.md
+LICENSE
+*.md
+
+# Configuration files that have specific formatting requirements
+.gitignore
+.eslintignore
+.prettierignore
+
+# Generated CSV files (preserve original formatting)
+*.csv
+!examples/*.csv

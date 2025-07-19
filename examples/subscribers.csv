@@ -1,0 +1,15 @@
+email,first_name,last_name
+john.doe@example.com,John,Doe
+jane.smith@example.com,Jane,Smith
+bob.johnson@example.com,Bob,Johnson
+alice.williams@example.com,Alice,Williams
+charlie.brown@example.com,Charlie,Brown
+diana.davis@example.com,Diana,Davis
+frank.miller@example.com,Frank,Miller
+grace.wilson@example.com,Grace,Wilson
+henry.moore@example.com,Henry,Moore
+ivy.taylor@example.com,Ivy,Taylor
+newsletter@company.com,,
+support@startup.io,Support,Team
+user+tag@domain.com,Tagged,User
+test.email@subdomain.example.org,Test,User

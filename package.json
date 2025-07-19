@@ -1,0 +1,57 @@
+{
+  "name": "mailgun-optin-cli",
+  "version": "1.0.0",
+  "description": "CLI tool for sending opt-in confirmation emails via Mailgun",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "mailgun-confirm": "src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "mocha 'test/**/*.test.js'",
+    "test:watch": "mocha 'test/**/*.test.js' --watch",
+    "test:coverage": "c8 mocha 'test/**/*.test.js'",
+    "lint": "eslint src/ test/",
+    "lint:fix": "eslint src/ test/ --fix",
+    "format": "prettier --write src/ test/",
+    "format:check": "prettier --check src/ test/"
+  },
+  "keywords": [
+    "mailgun",
+    "email",
+    "opt-in",
+    "confirmation",
+    "cli",
+    "csv",
+    "gdpr",
+    "can-spam"
+  ],
+  "author": "RooCode",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "mailgun.js": "^10.2.3",
+    "csv-parser": "^3.0.0",
+    "uuid": "^10.0.0",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "mocha": "^10.7.3",
+    "chai": "^5.1.1",
+    "c8": "^10.1.2",
+    "eslint": "^9.9.1",
+    "prettier": "^3.3.3",
+    "@eslint/js": "^9.9.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/username/mailgun-optin-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/username/mailgun-optin-cli/issues"
+  },
+  "homepage": "https://github.com/username/mailgun-optin-cli#readme"
+}
