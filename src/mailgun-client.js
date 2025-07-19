@@ -84,13 +84,23 @@ export const sendEmail = async (client, emailData) => {
   try {
     validateEmailData(emailData);
 
+    // Extract local part from FROM_EMAIL for the sender address
+    const fromEmailParts = client.config.fromEmail.split('@');
+    const localPart = fromEmailParts[0];
+    
+    // Use Mailgun domain for the From address to avoid rewriting
+    const fromAddress = `${localPart}@${client.config.domain}`;
+
     const messageData = {
-      from: `${client.config.fromName} <${client.config.fromEmail}>`,
+      from: `${client.config.fromName} <${fromAddress}>`,
       to: emailData.to,
       subject: emailData.subject,
       text: emailData.text,
       html: emailData.html,
     };
+
+    // Set Reply-To to the original FROM_EMAIL so replies go to the right place
+    messageData['h:Reply-To'] = `${client.config.fromName} <${client.config.fromEmail}>`;
 
     // Add custom headers if provided
     if (emailData.headers) {
